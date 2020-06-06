@@ -6,9 +6,9 @@ class DiagonalBoxPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = 500.0;
+    final size = 300.0;
     return SafeArea(
-      child: Stack(
+      child: Column(
         children: [
           ClipPath(
             clipper: DiagonalBoxTopRight(),
@@ -23,9 +23,8 @@ class DiagonalBoxPage extends StatelessWidget {
               child: ClipPath(
                 clipper: DiagonalBoxBottomRight(),
                 child: Container(
-                  padding: EdgeInsets.all(25),
-                  width: size - 180,
-                  height: size - 180,
+                  width: size,
+                  height: size,
                   color: Colors.red,
                 ),
               ),
