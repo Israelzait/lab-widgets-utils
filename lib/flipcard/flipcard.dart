@@ -2,15 +2,21 @@ import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
 class FlipCardWidget extends StatefulWidget {
+  final BackgroundConfig background;
+  final double width;
+  final double height;
   final Widget frontFaceWidget;
   final Widget backFaceWidget;
-  final BackgroundConfig background;
+  final AnimationController controllerFlipCard;
 
-  const FlipCardWidget({
+  FlipCardWidget({
     Key key,
     @required this.background,
     this.frontFaceWidget,
     this.backFaceWidget,
+    this.width,
+    this.height,
+    this.controllerFlipCard,
   })  : assert(background != null),
         super(key: key);
 
@@ -18,60 +24,33 @@ class FlipCardWidget extends StatefulWidget {
   _FlipCardWidgetState createState() => _FlipCardWidgetState();
 }
 
-class _FlipCardWidgetState extends State<FlipCardWidget> with SingleTickerProviderStateMixin {
-  AnimationController animationController;
-  Animation<double> animationRotating;
+class _FlipCardWidgetState extends State<FlipCardWidget> {
+  Animation<double> animationFlip;
   Animation<double> animationOpacityOut;
   Animation<double> animationOpacityIn;
 
   void initState() {
     super.initState();
-    animationController = AnimationController(
-      vsync: this,
-      duration: Duration(milliseconds: 800),
-    );
-
-    animationRotating = Tween(begin: 0.0, end: -1.0 * math.pi).animate(
-      CurvedAnimation(
-        parent: animationController,
-        curve: Curves.easeIn,
-      ),
-    );
-
-    animationOpacityOut = Tween(begin: 1.0, end: 0.0).animate(
-      CurvedAnimation(
-        parent: animationController,
-        curve: Interval(0.25, 0.5, curve: Curves.easeIn),
-      ),
-    );
-
-    animationOpacityIn = Tween(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: animationController,
-        curve: Interval(0.52, 1.0, curve: Curves.easeIn),
-      ),
-    );
+    initAnimationsControllers();
   }
 
   @override
   Widget build(BuildContext context) {
-    //animationController.forward();
-
     return Container(
-      width: 500, // TODO responsive sizes FIX
-      height: 270,
+      width: widget.width,
+      height: widget.height,
       child: AnimatedBuilder(
-          animation: animationController,
+          animation: widget.controllerFlipCard,
           builder: (context, child) {
-            print('animationRotating ${animationRotating.status}');
-            print('animationRotating ${animationRotating.value}');
+            print('animationRotating ${animationFlip.status}');
+            print('animationRotating ${animationFlip.value}');
 
             return Stack(
               children: [
                 Transform(
                   transform: Matrix4.identity()
                     ..setEntry(3, 2, 0.001)
-                    ..rotateY(animationRotating.value),
+                    ..rotateY(animationFlip.value),
                   alignment: FractionalOffset.center,
                   child: _BackgroundCard(
                     backgroundConfig: widget.background,
@@ -84,7 +63,7 @@ class _FlipCardWidgetState extends State<FlipCardWidget> with SingleTickerProvid
                 Transform(
                   transform: Matrix4.rotationY(-1.0 * math.pi)
                     ..setEntry(3, 2, 0.001)
-                    ..rotateY(-animationRotating.value),
+                    ..rotateY(-animationFlip.value),
                   alignment: FractionalOffset.center,
                   child: Opacity(
                     opacity: animationOpacityIn.value,
@@ -96,17 +75,29 @@ class _FlipCardWidgetState extends State<FlipCardWidget> with SingleTickerProvid
           }),
     );
   }
-}
 
-class BackgroundConfig {
-  final ImageProvider image;
-  final BorderRadius borderRadius;
-  final bool shadow;
-  final Color backgroundColor;
+  void initAnimationsControllers() {
+    animationFlip = Tween(begin: 0.0, end: -1.0 * math.pi).animate(
+      CurvedAnimation(
+        parent: widget.controllerFlipCard,
+        curve: Curves.easeIn,
+      ),
+    );
 
-  BackgroundConfig({this.image, this.borderRadius, this.shadow = false, this.backgroundColor})
-      : assert(image != null || backgroundColor != null),
-        assert(image == null || backgroundColor == null, 'Cannot provide both a image and a backgroundColor');
+    animationOpacityOut = Tween(begin: 1.0, end: 0.0).animate(
+      CurvedAnimation(
+        parent: widget.controllerFlipCard,
+        curve: Interval(0.25, 0.5, curve: Curves.easeIn),
+      ),
+    );
+
+    animationOpacityIn = Tween(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: widget.controllerFlipCard,
+        curve: Interval(0.52, 1.0, curve: Curves.easeIn),
+      ),
+    );
+  }
 }
 
 class _BackgroundCard extends StatelessWidget {
@@ -157,4 +148,15 @@ class _BackgroundCard extends StatelessWidget {
       boxShadow: (backgroundConfig.shadow) ? [_boxShadow] : [],
     );
   }
+}
+
+class BackgroundConfig {
+  final ImageProvider image;
+  final BorderRadius borderRadius;
+  final bool shadow;
+  final Color backgroundColor;
+
+  BackgroundConfig({this.image, this.borderRadius, this.shadow = false, this.backgroundColor})
+      : assert(image != null || backgroundColor != null),
+        assert(image == null || backgroundColor == null, 'Cannot provide both a image and a backgroundColor');
 }
