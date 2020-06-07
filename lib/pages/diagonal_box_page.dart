@@ -6,32 +6,50 @@ class DiagonalBoxPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = 300.0;
+    final size = 280.0;
     return SafeArea(
-      child: Column(
+      child: Center(
+        child: ClipPath(
+          clipper: DiagonalBox(),
+          child: Container(
+            //padding: EdgeInsets.all(25),
+            width: size,
+            height: size,
+            color: Colors.green,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/*Column(
         children: [
+          SizedBox(height: 20),
           ClipPath(
-            clipper: DiagonalBoxTopRight(),
+            clipper: DiagonalBox(),
             child: Container(
+              //padding: EdgeInsets.all(25),
               width: size,
               height: size,
               color: Colors.green,
             ),
           ),
+          SizedBox(height: 20),
           Container(
             child: Center(
-              child: ClipPath(
-                clipper: DiagonalBoxBottomRight(),
-                child: Container(
-                  width: size,
-                  height: size,
-                  color: Colors.red,
+              child: CustomPaint(
+                painter: DiagonalBoxBottomWithShadow(),
+                child: ClipPath(
+                  clipper: DiagonalBoxBottomRight(),
+                  child: Container(
+                    width: size,
+                    height: size,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
           ),
         ],
-      ),
-    );
-  }
-}
+      ),*/
