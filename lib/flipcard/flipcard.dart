@@ -2,6 +2,18 @@ import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
 class FlipCardWidget extends StatefulWidget {
+  final Widget frontFaceWidget;
+  final Widget backFaceWidget;
+  final BackgroundConfig background;
+
+  const FlipCardWidget({
+    Key key,
+    @required this.background,
+    this.frontFaceWidget,
+    this.backFaceWidget,
+  })  : assert(background != null),
+        super(key: key);
+
   @override
   _FlipCardWidgetState createState() => _FlipCardWidgetState();
 }
@@ -43,7 +55,7 @@ class _FlipCardWidgetState extends State<FlipCardWidget> with SingleTickerProvid
 
   @override
   Widget build(BuildContext context) {
-    animationController.forward();
+    //animationController.forward();
 
     return Container(
       width: 500, // TODO responsive sizes FIX
@@ -62,13 +74,10 @@ class _FlipCardWidgetState extends State<FlipCardWidget> with SingleTickerProvid
                     ..rotateY(animationRotating.value),
                   alignment: FractionalOffset.center,
                   child: _BackgroundCard(
-                    borderRadius: BorderRadius.circular(25),
-                    image: AssetImage('assets/bg4.jpeg'),
+                    backgroundConfig: widget.background,
                     child: Opacity(
                       opacity: animationOpacityOut.value,
-                      child: Center(
-                        child: Text('FRONT FACE', style: TextStyle(color: Colors.white)),
-                      ),
+                      child: widget.frontFaceWidget,
                     ),
                   ),
                 ),
@@ -79,7 +88,7 @@ class _FlipCardWidgetState extends State<FlipCardWidget> with SingleTickerProvid
                   alignment: FractionalOffset.center,
                   child: Opacity(
                     opacity: animationOpacityIn.value,
-                    child: Center(child: Text('BACK FACE', style: TextStyle(color: Colors.white))),
+                    child: widget.backFaceWidget,
                   ),
                 ),
               ],
@@ -89,58 +98,63 @@ class _FlipCardWidgetState extends State<FlipCardWidget> with SingleTickerProvid
   }
 }
 
-class _BackgroundCard extends StatelessWidget {
-  final Widget child;
+class BackgroundConfig {
   final ImageProvider image;
   final BorderRadius borderRadius;
   final bool shadow;
   final Color backgroundColor;
 
+  BackgroundConfig({this.image, this.borderRadius, this.shadow = false, this.backgroundColor})
+      : assert(image != null || backgroundColor != null),
+        assert(image == null || backgroundColor == null, 'Cannot provide both a image and a backgroundColor');
+}
+
+class _BackgroundCard extends StatelessWidget {
+  final BackgroundConfig backgroundConfig;
+  final Widget child;
+
+  static const BoxShadow _boxShadow = BoxShadow(
+    color: Colors.black12,
+    spreadRadius: -1,
+    blurRadius: 30,
+    offset: Offset(0, 10),
+  );
+
   const _BackgroundCard({
     Key key,
-    @required this.child,
-    this.image,
-    this.borderRadius,
-    this.shadow = true,
-    this.backgroundColor = Colors.white,
+    @required this.backgroundConfig,
+    this.child,
   })  : assert(child != null),
         super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: (image != null) ? _imageDecoration() : _backgroundDecoration(),
+      decoration: (backgroundConfig.image != null) ? _imageDecoration() : _backgroundDecoration(),
       child: this.child,
     );
   }
 
   BoxDecoration _imageDecoration() {
     return BoxDecoration(
-      borderRadius: borderRadius,
+      borderRadius: backgroundConfig.borderRadius,
       image: DecorationImage(
-        image: image, // Decide if backgroundPath is dynamic for constructor
+        image: backgroundConfig.image, // Decide if backgroundPath is dynamic for constructor
         fit: BoxFit.cover,
         colorFilter: ColorFilter.mode(
           Colors.black.withOpacity(0.4),
           BlendMode.srcOver,
         ),
       ),
+      boxShadow: (backgroundConfig.shadow) ? [_boxShadow] : [],
     );
   }
 
   BoxDecoration _backgroundDecoration() {
     return BoxDecoration(
-        borderRadius: borderRadius,
-        color: backgroundColor,
-        boxShadow: (shadow)
-            ? [
-                BoxShadow(
-                  color: Colors.black12,
-                  spreadRadius: -1,
-                  blurRadius: 30,
-                  offset: Offset(0, 10),
-                ),
-              ]
-            : []);
+      borderRadius: backgroundConfig.borderRadius,
+      color: backgroundConfig.backgroundColor,
+      boxShadow: (backgroundConfig.shadow) ? [_boxShadow] : [],
+    );
   }
 }
