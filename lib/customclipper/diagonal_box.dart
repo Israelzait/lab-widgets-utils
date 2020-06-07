@@ -2,29 +2,32 @@ import 'package:flutter/material.dart';
 
 class DiagonalBoxWidget extends StatelessWidget {
   final double radius;
-  final double lessLinePercent;
-  final ShadowConfig shadowConfig;
+  final DiagonalType diagonalType;
+  final double minorLinePercent;
+  final ShadowConfig shadow;
   final Widget child;
 
   DiagonalBoxWidget({
     this.radius = 30.0,
-    this.lessLinePercent = 70,
-    this.shadowConfig,
+    this.diagonalType = DiagonalType.diagonalLeftToBottomRight,
+    this.minorLinePercent,
+    this.shadow,
     this.child,
   });
 
   @override
   Widget build(BuildContext context) {
-    _DiagonalBoxBottomRight diagonalBox = _DiagonalBoxBottomRight(
+    _DiagonalBox diagonalBox = _DiagonalBox(
       curveDistance: radius,
-      lessLinePercent: lessLinePercent / 100,
+      minorLinePercent: minorLinePercent,
+      diagonalType: diagonalType,
     );
 
-    CustomPainter shadowPainter = (shadowConfig != null)
+    CustomPainter shadowPainter = (shadow != null)
         ? _BoxShadow(
             path: diagonalBox,
-            elevation: shadowConfig.elevation,
-            shadowColor: shadowConfig.shadowColor,
+            elevation: shadow.elevation,
+            shadowColor: shadow.shadowColor,
           )
         : null;
 
@@ -68,25 +71,47 @@ class _BoxShadow extends CustomPainter {
   bool shouldRepaint(CustomPainter oldDelegate) => true;
 }
 
-class _DiagonalBoxBottomRight extends CustomClipper<Path> {
-  final double curveDistance;
-  final double lessLinePercent;
+enum DiagonalType { diagonalLeftToBottomRight, diagonalRightToBottomLeft }
 
-  _DiagonalBoxBottomRight({
+class _DiagonalBox extends CustomClipper<Path> {
+  final double curveDistance;
+  final double minorLinePercent;
+  final DiagonalType diagonalType;
+
+  _DiagonalBox({
     @required this.curveDistance,
-    @required this.lessLinePercent,
+    @required this.minorLinePercent,
+    @required this.diagonalType,
   });
 
   @override
   Path getClip(Size size) {
+    double minor = minorLinePercent;
+    if (minorLinePercent == null) {
+      minor = (diagonalType == DiagonalType.diagonalLeftToBottomRight) ? 70.0 : 40.0;
+    }
+
+    if (diagonalType == DiagonalType.diagonalLeftToBottomRight)
+      return _diagonalLeftToBottomRight(size, minor / 100);
+    else
+      return _diagonalRightToBottomLeft(size, minor / 100);
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) {
+    return true;
+  }
+
+  Path _diagonalLeftToBottomRight(Size size, double minor) {
     final path = Path();
 
     path.moveTo(0, curveDistance);
-    path.lineTo(0, size.height * lessLinePercent - curveDistance); // line left
-    path.quadraticBezierTo(1, size.height * lessLinePercent - curveDistance / 3, 0 + curveDistance,
-        size.height * lessLinePercent); // Border bottom left
+    path.lineTo(0, size.height * minor - curveDistance); // line left
+    path.quadraticBezierTo(
+        1, size.height * minor - curveDistance / 3, 0 + curveDistance, size.height * minor); // Border bottom left
     path.lineTo(size.width - (curveDistance - 5), size.height); // diagonal !!5!!
-    path.quadraticBezierTo(size.width, size.height, size.width, size.height - curveDistance + 5); // bottom right
+    path.quadraticBezierTo(
+        size.width - 1, size.height - 1, size.width, size.height - curveDistance + 5); // bottom right
     path.lineTo(size.width, curveDistance); // right
     path.quadraticBezierTo(size.width, 1, size.width - curveDistance, 0); // top right
     path.lineTo(curveDistance, 0); // top
@@ -95,8 +120,18 @@ class _DiagonalBoxBottomRight extends CustomClipper<Path> {
     return path;
   }
 
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) {
-    return true;
+  Path _diagonalRightToBottomLeft(Size size, double minor) {
+    final path = Path();
+    path.moveTo(0, size.height * minor - curveDistance);
+    path.lineTo(0, size.height - curveDistance); //left
+    path.quadraticBezierTo(1, size.height - 1, 0 + curveDistance, size.height); //bottom left
+    path.lineTo(size.width - curveDistance, size.height); // bottom
+    path.quadraticBezierTo(size.width - 1, size.height - 1, size.width, size.height - curveDistance); // bottom right
+    path.lineTo(size.width, 0 + curveDistance); // right
+    path.quadraticBezierTo(size.width - 1, 1, size.width - curveDistance - 5, 0); // top right
+    path.lineTo(curveDistance, size.height * minor - curveDistance); //diagonal
+    path.quadraticBezierTo(1, size.height * minor - curveDistance - 1 + curveDistance / 3, 0, size.height * minor);
+
+    return path;
   }
 }

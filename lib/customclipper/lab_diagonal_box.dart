@@ -48,6 +48,7 @@ class DiagonalBoxBottomRight extends CustomClipper<Path> {
         1, size.height * 0.7 - curveDistance / 3, 0 + curveDistance, size.height * 0.7); // Border bottom left
     path.lineTo(size.width - (curveDistance - 5), size.height); // diagonal !!5!!
     path.quadraticBezierTo(size.width, size.height, size.width, size.height - curveDistance + 5); // bottom right
+    //path.quadraticBezierTo(size.width - 1, 0, size.width - curveDistance - 5, 0 + curveDistance / 3); // top left
     path.lineTo(size.width, curveDistance); // right
     path.quadraticBezierTo(size.width, 1, size.width - curveDistance, 0); // top right
     path.lineTo(curveDistance, 0); // top

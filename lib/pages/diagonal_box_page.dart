@@ -14,7 +14,7 @@ class DiagonalBoxPage extends StatelessWidget {
           children: [
             SizedBox(height: 20),
             DiagonalBoxWidget(
-              shadowConfig: ShadowConfig(elevation: 5.0),
+              shadow: ShadowConfig(elevation: 5.0),
               child: Container(
                 width: size,
                 height: size,
