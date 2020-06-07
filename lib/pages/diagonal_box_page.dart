@@ -18,21 +18,19 @@ class DiagonalBoxPage extends StatelessWidget {
               child: Container(
                 width: size,
                 height: size,
-                color: Colors.white,
+                color: Colors.red,
               ),
             ),
             SizedBox(height: 20),
             Container(
               child: Center(
-                child: CustomPaint(
-                  painter: DiagonalBoxBottomWithShadow(),
-                  child: ClipPath(
-                    clipper: DiagonalBoxBottomRight(),
-                    child: Container(
-                      width: size,
-                      height: size,
-                      color: Colors.white,
-                    ),
+                child: DiagonalBoxWidget(
+                  shadow: ShadowConfig(elevation: 5.0),
+                  diagonalType: DiagonalType.diagonalRightToBottomLeft,
+                  child: Container(
+                    width: size,
+                    height: size,
+                    color: Colors.pink,
                   ),
                 ),
               ),
