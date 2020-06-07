@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:labwidgetsutils/customclipper/diagonal_clipper_box.dart';
+import 'package:labwidgetsutils/customclipper/diagonal_box.dart';
+import 'package:labwidgetsutils/customclipper/lab_diagonal_box.dart';
 
 class DiagonalBoxPage extends StatelessWidget {
   static const String pageRoute = 'diagonal_box_page_route_id';
@@ -9,47 +10,38 @@ class DiagonalBoxPage extends StatelessWidget {
     final size = 280.0;
     return SafeArea(
       child: Center(
-        child: ClipPath(
-          clipper: DiagonalBox(),
-          child: Container(
-            //padding: EdgeInsets.all(25),
-            width: size,
-            height: size,
-            color: Colors.green,
-          ),
+        child: Column(
+          children: [
+            SizedBox(height: 20),
+            DiagonalBoxWidget(
+              shadowConfig: ShadowConfig(elevation: 5.0),
+              child: Container(
+                width: size,
+                height: size,
+                color: Colors.white,
+              ),
+            ),
+            SizedBox(height: 20),
+            Container(
+              child: Center(
+                child: CustomPaint(
+                  painter: DiagonalBoxBottomWithShadow(),
+                  child: ClipPath(
+                    clipper: DiagonalBoxBottomRight(),
+                    child: Container(
+                      width: size,
+                      height: size,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
-/*Column(
-        children: [
-          SizedBox(height: 20),
-          ClipPath(
-            clipper: DiagonalBox(),
-            child: Container(
-              //padding: EdgeInsets.all(25),
-              width: size,
-              height: size,
-              color: Colors.green,
-            ),
-          ),
-          SizedBox(height: 20),
-          Container(
-            child: Center(
-              child: CustomPaint(
-                painter: DiagonalBoxBottomWithShadow(),
-                child: ClipPath(
-                  clipper: DiagonalBoxBottomRight(),
-                  child: Container(
-                    width: size,
-                    height: size,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),*/
+/**/
