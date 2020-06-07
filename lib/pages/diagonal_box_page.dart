@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:labwidgetsutils/customclipper/diagonal_box.dart';
-import 'package:labwidgetsutils/customclipper/lab_diagonal_box.dart';
 
 class DiagonalBoxPage extends StatelessWidget {
   static const String pageRoute = 'diagonal_box_page_route_id';
