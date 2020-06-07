@@ -7,44 +7,56 @@ class DiagonalBox extends CustomClipper<Path> {
     const curveDistance = 30.0; // TODO param
 
     // initial point
-    // Left Line
-    // Bottom Left radius
-    // Bottom Line
-    // Bottom Right Radius
-    // Right Line
-    // Top Right Radius
-    // Top Line
-    // Top Left Radius
+    const double initialPointX = 0.0;
+    const double initialPointY = curveDistance;
 
-    path.moveTo(0.0, curveDistance); // initial point
-    path.lineTo(0.0, size.height - curveDistance); // Left Line
-    path.quadraticBezierTo(1, size.height - 1, 0.0 + curveDistance, size.height); // Bottom Left radius
-    path.lineTo(size.width - curveDistance, size.height); // Bottom Line
+    // Left Line
+    final double leftLineX = 0.0;
+    final double leftLineY = size.height - curveDistance;
+
+    // Bottom Left radius
+    final double bottomLeftRadiusX = curveDistance;
+    final double bottomLeftRadiusY = size.height;
+
+    // Bottom Line
+    final double bottomLineX = size.width - curveDistance;
+    final double bottomLineY = size.height;
+
+    // Bottom Right Radius
+    final double bottomRightRadiusX = size.width;
+    final double bottomRightRadiusY = size.height - curveDistance;
+
+    // Right Line
+    final double rightLineX = size.width;
+    final double rightLineY = curveDistance;
+
+    // Top Right Radius
+    final double topRightRadiusX = size.width - curveDistance;
+    final double topRightRadiusY = 0.0;
+
+    // Top Line
+    final double topLineX = curveDistance;
+    final double topLineY = 0.0;
+
+    // Top Left Radius
+    final double topLeftRadiusX = 0.0;
+    final double topLeftRadiusY = curveDistance;
+
+    path.moveTo(initialPointX, initialPointY); // initial point
+    path.lineTo(leftLineX, leftLineY); // Left Line
+    path.quadraticBezierTo(1, size.height - 1, bottomLeftRadiusX, bottomLeftRadiusY); // Bottom Left radius
+    path.lineTo(bottomLineX, bottomLineY); // Bottom Line
     path.quadraticBezierTo(
-        size.width - 1, size.height - 1, size.width, size.height - curveDistance); // Bottom Right Radius
-    path.lineTo(size.width, curveDistance); // Right Line
-    path.quadraticBezierTo(size.width - 1, 1, size.width - curveDistance, 0); // Top Right Radius
-    path.lineTo(curveDistance, 0); // Top Line
-    path.quadraticBezierTo(1, 1, 0, curveDistance); // Top Left Radius
+        size.width - 1, size.height - 1, bottomRightRadiusX, bottomRightRadiusY); // Bottom Right Radius
+    path.lineTo(rightLineX, rightLineY); // Right Line
+    path.quadraticBezierTo(size.width - 1, 1, topRightRadiusX, topRightRadiusY); // Top Right Radius
+    path.lineTo(topLineX, topLineY); // Top Line
+    path.quadraticBezierTo(1, 1, topLeftRadiusX, topLeftRadiusY); // Top Left Radius
     return path;
   }
 
   @override
   bool shouldReclip(CustomClipper<Path> oldClipper) => true;
-}
-
-class _XYPoints {
-  
-  // initial point
-
-  // Left Line
-  // Bottom Left radius
-  // Bottom Line
-  // Bottom Right Radius
-  // Right Line
-  // Top Right Radius
-  // Top Line
-  // Top Left Radius
 }
 
 class DiagonalBoxBottomWithShadow extends CustomPainter {
